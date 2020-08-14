@@ -1,0 +1,31 @@
+<html>
+  <head>
+    <title>Sinoalice Weapon Chooser</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <h1>Sinoalice Weapon Chooser</h1>
+    <p>Use this tool to maximize the your stats while keeping your weapon cost under you maximum.</p>
+    <p>Provide the weapons you want to potentially include in your grid, and it will calculate the optimal weapons to add to your grid.</p>
+    <form role="form" id="greetingsForm">
+      <label for="weapon_name">Name:</label>
+      <input type="text" id="weapon_name">
+      <label for="cost">Cost:</label>
+      <input type="text" id="cost">
+      <label for="stats">Total Stats:</label>
+      <input type="text" id="stats">
+      <button type="button", id="addWeapon">Add Weapon</button>
+      <br></br>
+      <ul id="weapons"></ul>
+      <label for="max_cost">Max Cost:</label>
+      <input type="text" id="max_cost">
+      <button type="button" id="calculateButton">Calculate!</button>
+      <br></br>
+      <label for="output">Best weapon grid is: </label>
+      <p id="output"></p>
+    </form>
+    <div id="result"></div>
+    <script src="getWeapons.js"></script>
+  </body>
+</html>
