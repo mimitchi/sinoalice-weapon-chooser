@@ -177,6 +177,22 @@ add_weapon.addEventListener('click', function() {
   addWeapon();
 });
 
+var diff_weapons = {}
+
+$.ajax({
+  url: "https://cors-anywhere.herokuapp.com/https://sinoalice.game-db.tw/package/alice_weapons-en_diff.js",
+  type: "GET",
+  async: false,
+  success: function(data, status) {
+    rows = JSON.parse(data)["Rows"]
+    for (i in rows) {
+      weapon = rows[i].split("|")
+      weapon_info = [parseInt(weapon[1]), parseInt(weapon[21]) + parseInt(weapon[2]) + parseInt(weapon[8]) + parseInt(weapon[9])]
+      diff_weapons[weapon[25]] = weapon_info
+    }
+  }
+})
+
 $.ajax({
   url: "https://cors-anywhere.herokuapp.com/https://sinoalice.game-db.tw/package/alice_weapons-en.js",
   type: "GET",
@@ -184,9 +200,13 @@ $.ajax({
   success: function(data, status) {
     rows = JSON.parse(data)["Rows"]
     for (i in rows) {
-      row = rows[i]
-      weapon = row.split("|")
-      weapon_info = [rarity[weapon[7]], weapon[5], parseInt(weapon[1]) + parseInt(weapon[13]) + parseInt(weapon[20]) + parseInt(weapon[25])]
+      weapon = rows[i].split("|")
+      if (weapon[4] in diff_weapons) {
+        weapon_info = [rarity[weapon[7]], diff_weapons[weapon[4]][0], diff_weapons[weapon[4]][1]]
+      }
+      else {
+        weapon_info = [rarity[weapon[7]], weapon[5], parseInt(weapon[1]) + parseInt(weapon[13]) + parseInt(weapon[20]) + parseInt(weapon[25])]
+      }
       if (weapon[0] in weapons_by_id) {
         weapons_by_id[weapon[0]].push(weapon_info)
       }
