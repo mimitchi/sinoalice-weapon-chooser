@@ -8,9 +8,10 @@
     <h1>Sinoalice Weapon Chooser</h1>
     <p>Use this tool to maximize the your stats while keeping your weapon cost under your maximum.</p>
     <p>Provide the weapons you want to potentially include in your grid, and it will calculate the optimal weapons to add to your grid.</p>
-    <form role="form" id="greetingsForm">
-      <label for="weapon_name">Name:</label>
-      <input type="text" id="weapon_name">
+    <form autocomplete="off" action="/action_page.php" role="form" id="weaponsForm">
+      <div class="autocomplete">
+        <input id="weapon_name" type="text" placeholder="Weapon Name">
+      </div>
       <label for="cost">Cost:</label>
       <input type="text" id="cost">
       <label for="stats">Total Stats:</label>
@@ -18,6 +19,7 @@
       <button type="button", id="addWeapon">Add Weapon</button>
       <br></br>
       <ul id="weapons"></ul>
+      <br></br>
       <label for="max_cost">Max Cost:</label>
       <input type="text" id="max_cost">
       <button type="button" id="calculateButton">Calculate!</button>
