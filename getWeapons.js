@@ -60,7 +60,7 @@ function returnWeapons() {
       result = data["body"];
       var output = document.getElementById('output');
       result_json = JSON.parse(result);
-      output.textContent = "Total Stats: " + result_json["total_stats"] + "\r\n" + "Weapons: " + result_json["weapons"].join(", ");
+      output.textContent = "Total Stats: " + result_json["total_stats"] + "\r\n" + "Total Cost: " + result_json["total_cost"] + "\r\n" + "Weapons: " + result_json["weapons"].join(", ");
     }
   });
 }
