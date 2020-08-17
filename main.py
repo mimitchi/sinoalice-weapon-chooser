@@ -17,12 +17,10 @@ def knapSack(max_cost, weapon_list):
 
     out = {}
 
-    for n in range(max_weapons + 1):
-        for i in range(length + 1): 
+    for n in range(1, max_weapons + 1):
+        for i in range(1, length + 1): 
             for cost in range(max_cost + 1): 
-                if n == 0 or i == 0 or cost == 0: 
-                    K[n][i][cost] = 0
-                elif weapons[i - 1].cost <= cost: 
+                if weapons[i - 1].cost <= cost: 
                     K[n][i][cost] = max(weapons[i - 1].stats  
                       + K[n - 1][i - 1][cost - weapons[i - 1].cost], 
                                    K[n][i - 1][cost]) 
@@ -34,7 +32,8 @@ def knapSack(max_cost, weapon_list):
     out["total_stats"] = res
     out_weapons = []
       
-    cost = max_cost 
+    cost = max_cost
+    num_weapons = max_weapons
     for i in range(length, 0, -1): 
         if res <= 0: 
             break
@@ -43,14 +42,16 @@ def knapSack(max_cost, weapon_list):
         # + K[n-1][i-1] [w-wt[i-1]]) as in Knapsack 
         # table. If it comes from the latter 
         # one/ it means the item is included. 
-        if res == K[max_weapons][i - 1][cost]: 
+        if res == K[num_weapons][i - 1][cost]: 
             continue
         else: 
             out_weapons.append(weapons[i - 1]) 
 
             res -= weapons[i - 1].stats 
             cost -= weapons[i - 1].cost
+            num_weapons -= 1
 
+    out_weapons.sort(key=lambda w: w.stats, reverse=True)
     out["weapons"] = [weapon.name for weapon in out_weapons]
 
     return out
