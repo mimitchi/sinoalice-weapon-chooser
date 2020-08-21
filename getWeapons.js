@@ -187,8 +187,8 @@ $.ajax({
     rows = JSON.parse(data)["Rows"]
     for (i in rows) {
       weapon = rows[i].split("|")
-      weapon_info = [parseInt(weapon[1]), parseInt(weapon[21]) + parseInt(weapon[2]) + parseInt(weapon[8]) + parseInt(weapon[9])]
-      diff_weapons[weapon[25]] = weapon_info
+      weapon_info = [parseInt(weapon[20]), parseInt(weapon[0]) + parseInt(weapon[10]) + parseInt(weapon[11]) + parseInt(weapon[17])]
+      diff_weapons[weapon[2]] = weapon_info
     }
   }
 })
@@ -201,17 +201,17 @@ $.ajax({
     rows = JSON.parse(data)["Rows"]
     for (i in rows) {
       weapon = rows[i].split("|")
-      if (weapon[4] in diff_weapons) {
-        weapon_info = [rarity[weapon[7]], diff_weapons[weapon[4]][0], diff_weapons[weapon[4]][1]]
+      if (weapon[16] in diff_weapons) {
+        weapon_info = [rarity[weapon[34]], diff_weapons[weapon[16]][0], diff_weapons[weapon[16]][1]]
       }
       else {
-        weapon_info = [rarity[weapon[7]], weapon[5], parseInt(weapon[1]) + parseInt(weapon[13]) + parseInt(weapon[20]) + parseInt(weapon[25])]
+        weapon_info = [rarity[weapon[34]], weapon[2], parseInt(weapon[21]) + parseInt(weapon[22]) + parseInt(weapon[24]) + parseInt(weapon[26])]
       }
-      if (weapon[0] in weapons_by_id) {
-        weapons_by_id[weapon[0]].push(weapon_info)
+      if (weapon[8] in weapons_by_id) {
+        weapons_by_id[weapon[8]].push(weapon_info)
       }
       else {
-        weapons_by_id[weapon[0]] = [weapon_info]
+        weapons_by_id[weapon[8]] = [weapon_info]
       }
     }
   }
