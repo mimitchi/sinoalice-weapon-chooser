@@ -188,7 +188,6 @@ $.ajax({
     rows = data_json["Rows"]
     cols_str = data_json["Cols"]
     cols = cols_str.toUpperCase().split("|")
-    console.log(cols)
     id_idx = cols.indexOf('ID')
     cost_idx = cols.indexOf('COST')
     mdef_idx = cols.indexOf('MAXMDEF')
