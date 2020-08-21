@@ -184,11 +184,21 @@ $.ajax({
   type: "GET",
   async: false,
   success: function(data, status) {
-    rows = JSON.parse(data)["Rows"]
+    data_json = JSON.parse(data)
+    rows = data_json["Rows"]
+    cols_str = data_json["Cols"]
+    cols = cols_str.toUpperCase().split("|")
+    console.log(cols)
+    id_idx = cols.indexOf('ID')
+    cost_idx = cols.indexOf('COST')
+    mdef_idx = cols.indexOf('MAXMDEF')
+    pdef_idx = cols.indexOf('MAXPDEF')
+    patk_idx = cols.indexOf('MAXMATK')
+    matk_idx = cols.indexOf('MAXPATK')
     for (i in rows) {
       weapon = rows[i].split("|")
-      weapon_info = [parseInt(weapon[20]), parseInt(weapon[0]) + parseInt(weapon[10]) + parseInt(weapon[11]) + parseInt(weapon[17])]
-      diff_weapons[weapon[2]] = weapon_info
+      weapon_info = [parseInt(weapon[cost_idx]), parseInt(weapon[mdef_idx]) + parseInt(weapon[pdef_idx]) + parseInt(weapon[matk_idx]) + parseInt(weapon[patk_idx])]
+      diff_weapons[weapon[id_idx]] = weapon_info
     }
   }
 })
@@ -198,20 +208,31 @@ $.ajax({
   type: "GET",
   async: false,
   success: function(data, status) {
-    rows = JSON.parse(data)["Rows"]
+    data_json = JSON.parse(data)
+    rows = data_json["Rows"]
+    cols_str = data_json["Cols"]
+    cols = cols_str.toUpperCase().split("|")
+    id_idx = cols.indexOf('ID')
+    unique_id_idx = cols.indexOf('UNIQUEID')
+    rarity_idx = cols.indexOf('RARITY')
+    cost_idx = cols.indexOf('COST')
+    mdef_idx = cols.indexOf('MAXMDEF')
+    pdef_idx = cols.indexOf('MAXPDEF')
+    patk_idx = cols.indexOf('MAXMATK')
+    matk_idx = cols.indexOf('MAXPATK')
     for (i in rows) {
       weapon = rows[i].split("|")
-      if (weapon[16] in diff_weapons) {
-        weapon_info = [rarity[weapon[34]], diff_weapons[weapon[16]][0], diff_weapons[weapon[16]][1]]
+      if (weapon[id_idx] in diff_weapons) {
+        weapon_info = [rarity[weapon[rarity_idx]], diff_weapons[weapon[id_idx]][0], diff_weapons[weapon[id_idx]][1]]
       }
       else {
-        weapon_info = [rarity[weapon[34]], weapon[2], parseInt(weapon[21]) + parseInt(weapon[22]) + parseInt(weapon[24]) + parseInt(weapon[26])]
+        weapon_info = [rarity[weapon[rarity_idx]], weapon[cost_idx], parseInt(weapon[mdef_idx]) + parseInt(weapon[pdef_idx]) + parseInt(weapon[matk_idx]) + parseInt(weapon[patk_idx])]
       }
-      if (weapon[8] in weapons_by_id) {
-        weapons_by_id[weapon[8]].push(weapon_info)
+      if (weapon[unique_id_idx] in weapons_by_id) {
+        weapons_by_id[weapon[unique_id_idx]].push(weapon_info)
       }
       else {
-        weapons_by_id[weapon[8]] = [weapon_info]
+        weapons_by_id[weapon[unique_id_idx]] = [weapon_info]
       }
     }
   }
