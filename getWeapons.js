@@ -14,6 +14,7 @@ const rarity = {
 function addWeapon() {
   var weapon_name = document.getElementById('weapon_name');
   var cost = document.getElementById('cost');
+  var level = document.getElementById('level');
   var stats = document.getElementById('stats');
   var weapon_list = document.getElementById('weapons');
 
@@ -38,6 +39,7 @@ function addWeapon() {
   weapon_name.value = "";
   cost.value = "";
   stats.value = "";
+  level.value = "";
 }
 
 function returnWeapons() {
@@ -98,10 +100,39 @@ function autocomplete(inp, arr) {
               /*insert the value for the autocomplete text field:*/
               inp.value = this.getElementsByTagName("input")[0].value;
               var cost = document.getElementById('cost');
+              var level = document.getElementById('level');
               var stats = document.getElementById('stats');
 
               cost.value = all_weapons[inp.value][0]
               stats.value = all_weapons[inp.value][1]
+              level.value = all_weapons[inp.value][2]
+              /*close the list of autocompleted values,
+              (or any other open lists of autocompleted values:*/
+              closeAllLists();
+          });
+          a.appendChild(b);
+        }
+        if (arr[i].toUpperCase().includes(val.toUpperCase(), 1)) {
+          substr_idx = arr[i].toUpperCase().indexOf(val.toUpperCase())
+          /*create a DIV element for each matching element:*/
+          b = document.createElement("DIV");
+          /*make the matching letters bold:*/
+          b.innerHTML = arr[i].substring(0, substr_idx)
+          b.innerHTML += "<strong>" + arr[i].substring(substr_idx, substr_idx + val.length) + "</strong>";
+          b.innerHTML += arr[i].substr(substr_idx + val.length);
+          /*insert a input field that will hold the current array item's value:*/
+          b.innerHTML += '<input type="hidden" value="' + arr[i] + '">';
+          /*execute a function when someone clicks on the item value (DIV element):*/
+          b.addEventListener("click", function(e) {
+              /*insert the value for the autocomplete text field:*/
+              inp.value = this.getElementsByTagName("input")[0].value;
+              var cost = document.getElementById('cost');
+              var level = document.getElementById('level');
+              var stats = document.getElementById('stats');
+
+              cost.value = all_weapons[inp.value][0]
+              stats.value = all_weapons[inp.value][1]
+              level.value = all_weapons[inp.value][2]
               /*close the list of autocompleted values,
               (or any other open lists of autocompleted values:*/
               closeAllLists();
@@ -168,6 +199,24 @@ document.addEventListener("click", function (e) {
 });
 }
 
+function setLevel(inp) {
+  inp.addEventListener("change", function(e) {
+    var a, b, i, val = this.value;
+
+    level = parseInt(val)
+    var weapon_name = document.getElementById('weapon_name');
+    var stats = document.getElementById('stats');
+    max_stats = all_weapons[weapon_name.value][1]
+    max_level = all_weapons[weapon_name.value][2]
+    add_stats = all_weapons[weapon_name.value][3]
+
+    if (max_level >= level) {
+      subtract_stats = (max_level - level) * add_stats;
+      stats.value = max_stats - subtract_stats;
+    }
+  });
+}
+
 var calculate = document.getElementById('calculateButton');
 calculate.addEventListener('click', function() {
   returnWeapons();
@@ -194,9 +243,16 @@ $.ajax({
     pdef_idx = cols.indexOf('MAXPDEF')
     patk_idx = cols.indexOf('MAXMATK')
     matk_idx = cols.indexOf('MAXPATK')
+    addmdef_idx = cols.indexOf('ADDMDEF')
+    addpdef_idx = cols.indexOf('ADDPDEF')
+    addmatk_idx = cols.indexOf('ADDMATK')
+    addpatk_idx = cols.indexOf('ADDPATK')
+    maxlvl_idx = cols.indexOf('MAXLV')
     for (i in rows) {
       weapon = rows[i].split("|")
-      weapon_info = [parseInt(weapon[cost_idx]), parseInt(weapon[mdef_idx]) + parseInt(weapon[pdef_idx]) + parseInt(weapon[matk_idx]) + parseInt(weapon[patk_idx])]
+      total_stats = parseInt(weapon[mdef_idx]) + parseInt(weapon[pdef_idx]) + parseInt(weapon[matk_idx]) + parseInt(weapon[patk_idx])
+      add_stats = parseInt(weapon[addmdef_idx]) + parseInt(weapon[addpdef_idx]) + parseInt(weapon[addmatk_idx]) + parseInt(weapon[addpatk_idx])
+      weapon_info = [parseInt(weapon[cost_idx]), total_stats, parseInt(weapon[maxlvl_idx]), add_stats]
       diff_weapons[weapon[id_idx]] = weapon_info
     }
   }
@@ -219,13 +275,20 @@ $.ajax({
     pdef_idx = cols.indexOf('MAXPDEF')
     patk_idx = cols.indexOf('MAXMATK')
     matk_idx = cols.indexOf('MAXPATK')
+    addmdef_idx = cols.indexOf('ADDMDEF')
+    addpdef_idx = cols.indexOf('ADDPDEF')
+    addmatk_idx = cols.indexOf('ADDMATK')
+    addpatk_idx = cols.indexOf('ADDPATK')
+    maxlvl_idx = cols.indexOf('MAXLV')
     for (i in rows) {
       weapon = rows[i].split("|")
       if (weapon[id_idx] in diff_weapons) {
-        weapon_info = [rarity[weapon[rarity_idx]], diff_weapons[weapon[id_idx]][0], diff_weapons[weapon[id_idx]][1]]
+        weapon_info = [rarity[weapon[rarity_idx]], diff_weapons[weapon[id_idx]][0], diff_weapons[weapon[id_idx]][1], diff_weapons[weapon[id_idx]][2], diff_weapons[weapon[id_idx]][3]]
       }
       else {
-        weapon_info = [rarity[weapon[rarity_idx]], weapon[cost_idx], parseInt(weapon[mdef_idx]) + parseInt(weapon[pdef_idx]) + parseInt(weapon[matk_idx]) + parseInt(weapon[patk_idx])]
+        total_stats = parseInt(weapon[mdef_idx]) + parseInt(weapon[pdef_idx]) + parseInt(weapon[matk_idx]) + parseInt(weapon[patk_idx])
+        add_stats = parseInt(weapon[addmdef_idx]) + parseInt(weapon[addpdef_idx]) + parseInt(weapon[addmatk_idx]) + parseInt(weapon[addpatk_idx])
+        weapon_info = [rarity[weapon[rarity_idx]], weapon[cost_idx], total_stats, weapon[maxlvl_idx], add_stats]
       }
       if (weapon[unique_id_idx] in weapons_by_id) {
         weapons_by_id[weapon[unique_id_idx]].push(weapon_info)
@@ -249,11 +312,12 @@ $.ajax({
       weapon = weapons_by_id[ids[i]]
       for (j in weapon) {
         weapon_name = names[i] + " (" + weapon[j][0] + ")"
-        all_weapons[weapon_name] = [weapon[j][1], weapon[j][2]]
+        all_weapons[weapon_name] = [weapon[j][1], weapon[j][2], weapon[j][3], weapon[j][4]]
       }
     }
   }
 })
 
 autocomplete(document.getElementById("weapon_name"), Object.keys(all_weapons));
+setLevel(document.getElementById("level"));
 
